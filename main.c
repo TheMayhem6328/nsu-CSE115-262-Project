@@ -18,10 +18,10 @@ Also, death to Code::Blocks
 #include <string.h>
 
 int main(void) {
-    FManager s;
-    s.id = 2;
-    strncpy(s.name, "Hello There!", NAME_LENGTH);
-    s.name[sizeof(s.name) - 1] = '\0';
-    printf("%d %s\n", s.id, s.name);
-    return 0;
+  FManager s;
+  s.id = 2;
+  strncpy(s.name, "Hello There!", NAME_LENGTH);
+  s.name[sizeof(s.name) - 1] = '\0';
+  printf("%d %s\n", s.id, s.name);
+  return 0;
 }
