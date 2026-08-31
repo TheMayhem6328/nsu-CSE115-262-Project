@@ -1,15 +1,11 @@
-/*
-main.c
-Zahiruzzman Chowdhury
+// main.c
+// Zahiruzzman Chowdhury
+//
+// Main runtime code
+//
+// Also, death to Code::Blocks
 
-Keeping it compatible with C89
-Since I do not trust any environment
-outside mine
-
-Also, death to Code::Blocks
-*/
-
-#ifndef CRT_SECURE_NO_WARNINGS
+#ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
