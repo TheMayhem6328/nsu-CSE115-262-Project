@@ -2,6 +2,8 @@
 
 ## Rant
 - I so wish OOP and namespaces were a thing here, but alas
+- `scanf` is such an unpredictable function. Why were we
+   not just taught to use `fgets` and `atoi` or `strtoi`?  
 
 ## Requirements
 

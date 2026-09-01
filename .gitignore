@@ -1,4 +1,10 @@
+# IDE
 .idea/
 .vscode/
-build/
+
+# Junk
 ._tmp/
+
+# Post-compile data
+build/
+DATA.CS115FB

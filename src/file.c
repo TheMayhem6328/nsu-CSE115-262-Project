@@ -6,6 +6,7 @@
 // Also, death to Code::Blocks
 
 #include "file.h"
+#include "types.h"
 #include <stdint.h>
 
 // Big Endian Write
@@ -87,6 +88,13 @@ uint8_t read_uint8_be(FILE *f) {
   return buf[0];
 }
 
-uint8_t file_saveDataFile(void) {
-  return 0;
+EBoolean file_dataFileExists(void) {
+  FILE *file = fopen(DATAFILE, "r");
+  if (file != NULL) {
+    fclose(file);
+    return TRUE;
+  }
+  return FALSE;
 }
+
+uint8_t file_saveDataFile(void) { return 0; }

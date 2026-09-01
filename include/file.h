@@ -9,7 +9,9 @@
 #ifndef M6328_FILES
 #define M6328_FILES
 
-#include "types.h" // IWYU pragma: keep
+#define DATAFILE "DATA.CS115FB"
+
+#include "types.h"
 #include <stdint.h>
 #include <stdio.h> // IWYU pragma: keep
 
@@ -33,6 +35,7 @@ uint8_t file_readBeUint8(FILE *f);
 
 // File
 
+EBoolean file_dataFileExists(void);
 uint8_t file_saveDataFile(void);
 
 #endif
