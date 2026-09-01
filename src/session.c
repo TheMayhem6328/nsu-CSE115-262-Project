@@ -23,6 +23,8 @@ FPlayer **session_playerDynamicArray = NULL;
 
 //// Functions
 
+// Session management
+
 uint_fast8_t session_login(EUserType type, uint16_t id) {
   void *retrievedId;
 
@@ -40,6 +42,38 @@ uint_fast8_t session_login(EUserType type, uint16_t id) {
     return 0;
   }
 }
+
+uint_fast8_t session_exit(void) {
+  //// Clean up dynamically allocated memory
+
+  // Admin
+  for (int i = 0; i < session_adminCount; i++) {
+    free(session_adminDynamicArray[i]);
+  }
+  free(session_adminDynamicArray);
+
+  // Team
+  for (int i = 0; i < session_teamCount; i++) {
+    free(session_teamDynamicArray[i]);
+  }
+  free(session_teamDynamicArray);
+
+  // Manager
+  for (int i = 0; i < session_managerCount; i++) {
+    free(session_managerDynamicArray[i]);
+  }
+  free(session_managerDynamicArray);
+
+  // Player
+  for (int i = 0; i < session_playerCount; i++) {
+    free(session_playerDynamicArray[i]);
+  }
+  free(session_playerDynamicArray);
+
+  return 0;
+}
+
+// Current session info retrieval
 
 uint16_t session_getCurrentUserID(void) {
   if (USER_CURRENT.userObj == NULL) {
@@ -73,13 +107,4 @@ const char *session_getCurrentUserName(void) {
   default:
     return NULL;
   }
-}
-
-uint_fast8_t session_exit(void) {
-  free(session_adminDynamicArray);
-  free(session_teamDynamicArray);
-  free(session_managerDynamicArray);
-  free(session_playerDynamicArray);
-
-  return 0;
 }

@@ -45,9 +45,12 @@ extern FUser USER_CURRENT;
 
 //// Functions
 
+// Session management
 uint_fast8_t session_login(EUserType type, uint16_t id);
+uint_fast8_t session_exit(void);
+
+// Current session info retrieval
 uint16_t session_getCurrentUserID(void);
 const char *session_getCurrentUserName(void);
-uint_fast8_t session_exit(void);
 
 #endif
