@@ -8,7 +8,7 @@
 #ifndef M6328_PLAYER
 #define M6328_PLAYER
 
-#include "types.h" // IWYU pragma: keep
+#include "types.h"
 #include <stdint.h>
 
 // Basic CRUD

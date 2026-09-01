@@ -16,9 +16,9 @@
 #include "session.h"
 #include "team.h" // IWYU pragma: keep
 #include "types.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 
 int validatedLogin(EUserType usertype, const char *label) {
   unsigned int userID;
@@ -30,8 +30,8 @@ int validatedLogin(EUserType usertype, const char *label) {
   userID = (unsigned int)strtol(userInput, (void *)0, 10);
 
   // Login
-  if (user_login(usertype, userID)) {
-    puts("Successfully logged in");
+  if (session_login(usertype, (uint16_t)userID)) {
+    printf("Successfully logged in as (%s) %s\n", label, session_getCurrentUserName());
     return 0;
   } else {
     printf("Invalid %s ID. Please try again\n", label);
@@ -56,15 +56,17 @@ uint_fast8_t mainMenu(void) {
   // Load user type specific menu
   switch (userChoice) {
   case 0:
+    file_saveDataFile();
+    session_exit();
     return 0;
   case 1:
-    return validatedLogin(USER_ADMIN, "Admin");
+    return (uint_fast8_t)validatedLogin(USER_ADMIN, "Admin");
     break;
   case 2:
-    return validatedLogin(USER_MANAGER, "Manager");
+    return (uint_fast8_t)validatedLogin(USER_MANAGER, "Manager");
     break;
   case 3:
-    return validatedLogin(USER_PLAYER, "Player");
+    return (uint_fast8_t)validatedLogin(USER_PLAYER, "Player");
     break;
   default:
     puts("Invalid option - please try again");
@@ -75,11 +77,14 @@ uint_fast8_t mainMenu(void) {
 int main(void) {
   uint_fast8_t loopFlag = 0;
   if (!file_dataFileExists()) {
-    puts("INIT");
-  } else {
-    do {
-      loopFlag = mainMenu();
-    } while (loopFlag);
+    puts("Data file doesn't exist. Running `file_createDataFile`");
+    file_createDataFile();
+    puts("Created data file. Executing regular program now");
   }
+
+  do {
+    loopFlag = mainMenu();
+  } while (loopFlag);
+
   return 0;
 }

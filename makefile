@@ -2,7 +2,7 @@ CC := clang
 BUILD_DIR := build
 HEADER_DIR := include
 SRC_DIR := src
-CFLAGS := -I$(HEADER_DIR) -std=c99 -Wall -Wextra -pedantic
+CFLAGS := -g -I$(HEADER_DIR) -std=c99 -Wall -Wextra -pedantic -Wconversion -Wno-unused-function
 HEADERS := $(wildcard $(HEADER_DIR)/*.h)
 SRC := $(wildcard $(SRC_DIR)/*.c)
 SRC += main.c

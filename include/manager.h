@@ -8,7 +8,7 @@
 #ifndef M6328_MANAGER
 #define M6328_MANAGER
 
-#include "types.h" // IWYU pragma: keep
+#include "types.h"
 #include <stdint.h>
 
 // Basic CRUD
