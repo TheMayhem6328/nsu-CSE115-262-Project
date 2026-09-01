@@ -1,8 +1,11 @@
 CC := clang
-CFLAGS := -std=c99 -Wall -Wextra -pedantic
-SRC := types.c admin.c manager.c player.c team.c session.c file.c main.c
-HEADERS := types.h admin.h manager.h player.h team.h session.h file.h
 BUILD_DIR := build
+HEADER_DIR := include
+SRC_DIR := src
+CFLAGS := -I$(HEADER_DIR) -std=c99 -Wall -Wextra -pedantic
+HEADERS := $(wildcard $(HEADER_DIR)/*.h)
+SRC := $(wildcard $(SRC_DIR)/*.c)
+SRC += main.c
 TARGET := program
 .DEFAULT_GOAL := all
 
@@ -17,6 +20,7 @@ endif
 all: $(BUILD_DIR)/$(TARGET)$(EXE)
 
 $(BUILD_DIR):
+	@echo "Creating build directory (./$(BUILD_DIR))"
 	mkdir -p "$(BUILD_DIR)"
 
 $(BUILD_DIR)/$(TARGET)$(EXE): $(SRC) $(HEADERS) | $(BUILD_DIR)
