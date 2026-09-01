@@ -24,7 +24,7 @@ typedef struct manager FManager;
 typedef struct player FPlayer;
 
 // Enumerates
-typedef enum bool { FALSE, TRUE } EBool;
+typedef enum boolean { FALSE, TRUE } EBoolean;
 typedef enum playerPosition {
   POSITION_GK,
 
@@ -50,21 +50,21 @@ typedef enum playerPosition {
 } EPlayerPosition;
 
 // String arrays
-extern const char *positionNames[POSITION_COUNT];
+extern const char *const positionNames[POSITION_COUNT];
 
 // Data types
 struct admin {
   // Basics
   uint16_t id;
   char name[NAME_LENGTH];
-  EBool isActive;
+  EBoolean isActive;
 };
 
 struct team {
   // Basics
   uint16_t id;
   char name[NAME_LENGTH];
-  EBool isActive;
+  EBoolean isActive;
 
   // Location metadata
   char city[NAME_LENGTH];
@@ -80,6 +80,7 @@ struct team {
   uint16_t points;
 
   // Team Information
+  uint16_t managerID;
   uint8_t playerCount;
   uint8_t playerIDs[MAX_TEAM_PLAYERS];
 
@@ -94,10 +95,7 @@ struct manager {
   // Basics
   uint16_t id;
   char name[NAME_LENGTH];
-  EBool isActive;
-
-  // Team Information
-  uint16_t team_id;
+  EBoolean isActive;
 
   // Runtime only
   FTeam *teamPtr;
@@ -109,21 +107,21 @@ struct player {
   // Basics
   uint16_t id;
   char name[NAME_LENGTH];
-  EBool isActive;
+  EBoolean isActive;
 
   // Field identifier
   EPlayerPosition position;
-  int shirtNumber;
+  uint8_t shirtNumber;
 
   // Personal metadata
-  int rating;
-  int fitness;
-  EBool isInjured;
+  uint8_t rating;
+  uint8_t fitness;
+  EBoolean isInjured;
 
   // Season stats
-  int appearances;
-  int goals;
-  int assists;
+  uint16_t appearances;
+  uint16_t goals;
+  uint16_t assists;
 
   // Runtime only
   FTeam *teamPtr;

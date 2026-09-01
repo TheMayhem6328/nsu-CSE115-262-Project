@@ -1,7 +1,7 @@
 CC := clang
 CFLAGS := -std=c99 -Wall -Wextra -pedantic
-SRC := types.c main.c
-HEADERS := types.h
+SRC := types.c file.c main.c
+HEADERS := types.h file.h
 BUILD_DIR := build
 TARGET := program
 .DEFAULT_GOAL := all
