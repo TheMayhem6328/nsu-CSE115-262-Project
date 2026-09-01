@@ -6,6 +6,7 @@
 // Also, death to Code::Blocks
 
 #include "file.h"
+#include <stdint.h>
 
 // Big Endian Write
 
@@ -84,4 +85,8 @@ uint8_t read_uint8_be(FILE *f) {
   // Use bitwise operations to join bytes
   // into one uint64_t
   return buf[0];
+}
+
+uint8_t file_saveDataFile(void) {
+  return 0;
 }

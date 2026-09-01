@@ -19,17 +19,20 @@
 
 // Big Endian Write
 
-void write_uint64_be(FILE *f, uint64_t val);
-void write_uint16_be(FILE *f, uint16_t val);
-void write_uint8_be(FILE *f, uint8_t val);
+void file_writeBeUint64(FILE *f, uint64_t val);
+void file_writeBeUint16(FILE *f, uint16_t val);
+void file_writeBeUint8(FILE *f, uint8_t val);
 
 // Big Endian Read
 
-uint64_t read_uint64_be(FILE *f);
-uint16_t read_uint16_be(FILE *f);
-uint8_t read_uint8_be(FILE *f);
+uint64_t file_readBeUint64(FILE *f);
+uint16_t file_readBeUint16(FILE *f);
+uint8_t file_readBeUint8(FILE *f);
 
 // Serialization
 
+// File
+
+uint8_t file_saveDataFile(void);
 
 #endif

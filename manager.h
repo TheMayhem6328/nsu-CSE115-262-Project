@@ -1,0 +1,26 @@
+// manager.h
+// Zahiruzzman Chowdhury
+//
+// Functions for handling manager data
+//
+// Also, death to Code::Blocks
+
+#ifndef M6328_MANAGER
+#define M6328_MANAGER
+
+#include "types.h" // IWYU pragma: keep
+#include <stdint.h>
+
+// Basic CRUD
+FManager manager_create(uint16_t id, const char *name);
+FManager manager_retrieve(uint16_t id);
+uint_fast8_t manager_update(uint16_t id, const char *name, EBoolean isActive);
+uint_fast8_t manager_remove(uint16_t id);
+
+// Team Management
+void manager_addPlayerToTeam(uint16_t id);
+
+// Menu
+void manager_menu(void);
+
+#endif

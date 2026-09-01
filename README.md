@@ -1,5 +1,7 @@
 # CSE115 PROJECT
 
+## Rant
+- I so wish OOP and namespaces were a thing here, but alas
 
 ## Requirements
 
