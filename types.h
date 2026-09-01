@@ -80,9 +80,9 @@ struct team {
   uint16_t points;
 
   // Team Information
-  uint16_t managerID;
+  uint16_t managerID; // 0 = Unassigned
   uint8_t playerCount;
-  uint8_t playerIDs[MAX_TEAM_PLAYERS];
+  uint8_t playerIDs[MAX_TEAM_PLAYERS]; // 0 = Unassigned
 
   // Runtime only
   FManager *manager;
