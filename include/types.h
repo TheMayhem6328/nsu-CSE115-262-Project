@@ -79,7 +79,7 @@ struct team {
   uint16_t goalsAgainst;
   uint16_t points;
 
-  // Team Information
+  // Team information
   uint16_t managerID; // 0 = Unassigned
   uint8_t playerCount;
   uint8_t playerIDs[MAX_TEAM_PLAYERS]; // 0 = Unassigned

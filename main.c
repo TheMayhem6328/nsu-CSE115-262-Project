@@ -20,6 +20,8 @@ int main(void) {
     puts("Data file doesn't exist. Running `file_createDataFile`");
     file_createDataFile();
     puts("Created data file. Executing regular program now");
+  } else {
+    file_loadDataFile();
   }
 
   do {
