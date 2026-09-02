@@ -14,9 +14,10 @@
 // Basic CRUD
 FAdmin admin_create(uint16_t id, const char *name);
 FAdmin *admin_retrieve(uint16_t id);
-uint_fast8_t admin_update(uint16_t id, const char *name, EBoolean isActive);
-uint_fast8_t
-admin_remove(uint16_t id); // TODO: Do NOT let user remove last admin
+void admin_update(FAdmin *old, FAdmin *new);
+void admin_disable(
+    uint16_t id); // TODO: Do NOT let user remove last admin, and stop accessing
+                  // disabled anywhere, including lookups and file write
 
 // Menu
 void admin_menu(void);

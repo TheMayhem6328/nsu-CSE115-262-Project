@@ -1,3 +1,10 @@
+// types.c
+// Zahiruzzman Chowdhury
+//
+// Definition for data types like structs and all
+//
+// Also, death to Code::Blocks
+
 #include "types.h"
 
 // String arrays

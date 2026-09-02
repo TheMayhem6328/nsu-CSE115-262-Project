@@ -1,3 +1,10 @@
+// session.c
+// Zahiruzzman Chowdhury
+//
+// Functions for managing current session
+//
+// Also, death to Code::Blocks
+
 #include "session.h"
 #include "admin.h"
 #include "types.h"
