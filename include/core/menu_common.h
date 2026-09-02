@@ -1,3 +1,12 @@
+// menu_common.h
+// Zahiruzzman Chowdhury
+// 2513048043
+// CSE115.17
+//
+// Shared menu utility functions
+//
+// Also, death to Code::Blocks
+
 #ifndef M6328_MENU_COMMON
 #define M6328_MENU_COMMON
 

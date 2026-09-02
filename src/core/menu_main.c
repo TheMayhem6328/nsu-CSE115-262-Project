@@ -1,6 +1,16 @@
+// menu_main.c
+// Zahiruzzman Chowdhury
+// 2513048043
+// CSE115.17
+//
+// Main menu implementation
+//
+// Also, death to Code::Blocks
+
 #include "menu_main.h"
 #include "file_common.h"
 #include "menu_admin.h"
+#include "menu_common.h"
 #include "menu_manager.h"
 #include "menu_player.h"
 #include "session.h"

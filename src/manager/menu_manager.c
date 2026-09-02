@@ -1,3 +1,12 @@
+// menu_manager.c
+// Zahiruzzman Chowdhury
+// 2513048043
+// CSE115.17
+//
+// Manager menu implementation
+//
+// Also, death to Code::Blocks
+
 #include "menu_manager.h"
 #include "file_common.h"
 #include "manager.h"

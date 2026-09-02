@@ -1,3 +1,12 @@
+// menu_admin.h
+// Zahiruzzman Chowdhury
+// 2513048043
+// CSE115.17
+//
+// Admin menu functions
+//
+// Also, death to Code::Blocks
+
 #ifndef M6328_MENU_ADMIN
 #define M6328_MENU_ADMIN
 

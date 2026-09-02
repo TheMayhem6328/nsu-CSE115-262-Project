@@ -1,3 +1,12 @@
+// menu_manager.h
+// Zahiruzzman Chowdhury
+// 2513048043
+// CSE115.17
+//
+// Manager menu functions
+//
+// Also, death to Code::Blocks
+
 #ifndef M6328_MENU_MANAGER
 #define M6328_MENU_MANAGER
 

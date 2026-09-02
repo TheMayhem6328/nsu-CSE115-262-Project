@@ -1,3 +1,12 @@
+// menu_common.c
+// Zahiruzzman Chowdhury
+// 2513048043
+// CSE115.17
+//
+// Shared menu input and display utilities
+//
+// Also, death to Code::Blocks
+
 #include "menu_common.h"
 #include "admin.h"
 #include "manager.h"

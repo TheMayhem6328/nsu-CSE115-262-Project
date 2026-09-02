@@ -1,3 +1,12 @@
+// file_player.c
+// Zahiruzzman Chowdhury
+// 2513048043
+// CSE115.17
+//
+// Player file serialization
+//
+// Also, death to Code::Blocks
+
 #include "file_player.h"
 #include "file_common.h"
 #include "types.h"

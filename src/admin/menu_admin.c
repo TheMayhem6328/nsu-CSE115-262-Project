@@ -1,3 +1,12 @@
+// menu_admin.c
+// Zahiruzzman Chowdhury
+// 2513048043
+// CSE115.17
+//
+// Admin menu implementation
+//
+// Also, death to Code::Blocks
+
 #include "menu_admin.h"
 #include "file_common.h"
 #include "menu_common.h"

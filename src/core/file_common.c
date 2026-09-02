@@ -1,3 +1,12 @@
+// file_common.c
+// Zahiruzzman Chowdhury
+// 2513048043
+// CSE115.17
+//
+// Shared file serialization and persistence
+//
+// Also, death to Code::Blocks
+
 #include "file_common.h"
 #include "file_admin.h"
 #include "file_manager.h"

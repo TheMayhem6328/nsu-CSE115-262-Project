@@ -1,3 +1,12 @@
+// file_team.c
+// Zahiruzzman Chowdhury
+// 2513048043
+// CSE115.17
+//
+// Team file serialization
+//
+// Also, death to Code::Blocks
+
 #include "file_team.h"
 #include "file_common.h"
 #include "types.h"

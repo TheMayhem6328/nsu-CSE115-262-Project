@@ -1,3 +1,12 @@
+// file_admin.c
+// Zahiruzzman Chowdhury
+// 2513048043
+// CSE115.17
+//
+// Admin file serialization
+//
+// Also, death to Code::Blocks
+
 #include "file_admin.h"
 #include "file_common.h"
 #include "types.h"

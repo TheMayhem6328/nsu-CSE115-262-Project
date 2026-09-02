@@ -1,3 +1,12 @@
+// menu_player.c
+// Zahiruzzman Chowdhury
+// 2513048043
+// CSE115.17
+//
+// Player menu implementation
+//
+// Also, death to Code::Blocks
+
 #include "menu_player.h"
 #include "file_common.h"
 #include "menu_common.h"
