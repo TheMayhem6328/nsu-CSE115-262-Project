@@ -1,6 +1,13 @@
+-g
+-Iinclude
+-Iinclude/admin
+-Iinclude/core
+-Iinclude/file
+-Iinclude/manager
+-Iinclude/player
+-Iinclude/team
 -std=c99
 -Wall
 -Wextra
 -pedantic
- -Wconversion
--Iinclude
+-Wconversion
