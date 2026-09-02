@@ -7,6 +7,8 @@
 
 #include "session.h"
 #include "admin.h"
+#include "manager.h"
+#include "player.h"
 #include "types.h"
 #include <stddef.h>
 #include <stdint.h>
@@ -44,14 +46,23 @@ uint_fast8_t session_login(EUserType type, uint16_t id) {
   switch (type) {
   case USER_ADMIN:
     retrievedId = admin_retrieve(id);
-    if (admin_retrieve(id) == NULL) {
-      return 0;
-    }
-    USER_CURRENT.userObj = retrievedId;
-    return 1;
+    break;
+  case USER_MANAGER:
+    retrievedId = manager_retrieve(id);
+    break;
+  case USER_PLAYER:
+    retrievedId = player_retrieve(id);
+    break;
   default:
     return 0;
   }
+
+  if (retrievedId == NULL) {
+    USER_CURRENT.type = USER_UNDEFINED;
+    return 0;
+  }
+  USER_CURRENT.userObj = retrievedId;
+  return 1;
 }
 
 uint_fast8_t session_exit(void) {

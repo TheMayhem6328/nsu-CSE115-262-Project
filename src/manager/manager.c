@@ -7,6 +7,7 @@
 
 #include "manager.h"
 #include "session.h"
+#include "player.h"
 #include "types.h"
 #include <stddef.h>
 #include <stdio.h>
@@ -27,7 +28,7 @@ FManager *manager_create(uint16_t id, const char *name) {
   manager.teamPtr = NULL;
 
   // Increment session counters
-  session_enabledAdminCount += 1;
+  session_enabledManagerCount += 1;
   session_managerCount += 1;
 
   // Append to session array
@@ -38,7 +39,7 @@ FManager *manager_create(uint16_t id, const char *name) {
     *session_managerDynamicArray[0] = manager;
   } else {
     FManager **temp = realloc(session_managerDynamicArray,
-                              session_managerCount * sizeof(int));
+                              session_managerCount * sizeof(FManager*));
     if (temp == NULL) {
       // Handle allocation failure safely
       fprintf(stderr, "Out of memory");
@@ -46,6 +47,12 @@ FManager *manager_create(uint16_t id, const char *name) {
       exit(1);
     }
     session_managerDynamicArray = temp;
+    session_managerDynamicArray[session_managerCount - 1] = malloc(sizeof(FManager));
+    if (session_managerDynamicArray[session_managerCount - 1] == NULL) {
+      fprintf(stderr, "Out of memory");
+      session_exit();
+      exit(1);
+    }
     *session_managerDynamicArray[session_managerCount - 1] = manager;
   }
 
@@ -72,9 +79,30 @@ void manager_update(FManager *old, FManager *new) {
   old->teamPtr = NULL;
 }
 
+void manager_addPlayerToTeam(uint16_t id) {
+  FManager *manager = (FManager *)USER_CURRENT.userObj;
+  FPlayer *player = player_retrieve(id);
+  FTeam *team = NULL;
+
+  if (manager == NULL || player == NULL || !player->isActive) return;
+  for (uint_fast8_t i = 0; i < session_teamCount; ++i) {
+    if (session_teamDynamicArray[i]->isActive &&
+        session_teamDynamicArray[i]->managerID == manager->id) {
+      team = session_teamDynamicArray[i];
+      break;
+    }
+  }
+  if (team == NULL || team->playerCount >= MAX_TEAM_PLAYERS || player->teamPtr != NULL)
+    return;
+
+  team->playerIDs[team->playerCount] = (uint8_t)id;
+  team->playerCount += 1;
+  player->teamPtr = team;
+}
+
 uint_fast8_t manager_disable(uint16_t id) {
   FManager *disableCandidate = manager_retrieve(id);
-  if (!(disableCandidate->isActive)) {
+  if (disableCandidate == NULL || !(disableCandidate->isActive)) {
     return 0;
   }
   disableCandidate->isActive = FALSE;

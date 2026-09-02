@@ -10,7 +10,7 @@
 #endif
 
 #include "file_common.h"
-#include "menu.h"
+#include "menu_main.h"
 #include <stdint.h>
 #include <stdio.h>
 

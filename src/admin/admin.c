@@ -35,7 +35,7 @@ FAdmin *admin_create(uint16_t id, const char *name) {
     *session_adminDynamicArray[0] = admin;
   } else {
     FAdmin **temp =
-        realloc(session_adminDynamicArray, session_adminCount * sizeof(int));
+        realloc(session_adminDynamicArray, session_adminCount * sizeof(FAdmin*));
     if (temp == NULL) {
       // Handle allocation failure safely
       fprintf(stderr, "Out of memory");
@@ -43,6 +43,12 @@ FAdmin *admin_create(uint16_t id, const char *name) {
       exit(1);
     }
     session_adminDynamicArray = temp;
+    session_adminDynamicArray[session_adminCount - 1] = malloc(sizeof(FAdmin));
+    if (session_adminDynamicArray[session_adminCount - 1] == NULL) {
+      fprintf(stderr, "Out of memory");
+      session_exit();
+      exit(1);
+    }
     *session_adminDynamicArray[session_adminCount - 1] = admin;
   }
 
@@ -72,7 +78,7 @@ uint_fast8_t admin_disable(uint16_t id) {
   }
 
   FAdmin *disableCandidate = admin_retrieve(id);
-  if (!(disableCandidate->isActive)) {
+  if (disableCandidate == NULL || !(disableCandidate->isActive)) {
     return 0;
   }
   disableCandidate->isActive = FALSE;

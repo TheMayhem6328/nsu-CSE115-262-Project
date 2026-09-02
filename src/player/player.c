@@ -41,7 +41,7 @@ FPlayer *player_create(uint16_t id, const char *name) {
   player.teamPtr = NULL;
 
   // Increment session counters
-  session_enabledAdminCount += 1;
+  session_enabledPlayerCount += 1;
   session_playerCount += 1;
 
   // Append to session array
@@ -50,7 +50,7 @@ FPlayer *player_create(uint16_t id, const char *name) {
     session_playerDynamicArray[0] = malloc(sizeof(FPlayer));
     *session_playerDynamicArray[0] = player;
   } else {
-    FPlayer **temp = realloc(session_playerDynamicArray, session_playerCount * sizeof(int));
+    FPlayer **temp = realloc(session_playerDynamicArray, session_playerCount * sizeof(FPlayer*));
     if (temp == NULL) {
         // Handle allocation failure safely
         fprintf(stderr, "Out of memory");
@@ -58,6 +58,12 @@ FPlayer *player_create(uint16_t id, const char *name) {
         exit(1);
     }
     session_playerDynamicArray = temp;
+    session_playerDynamicArray[session_playerCount - 1] = malloc(sizeof(FPlayer));
+    if (session_playerDynamicArray[session_playerCount - 1] == NULL) {
+        fprintf(stderr, "Out of memory");
+        session_exit();
+        exit(1);
+    }
     *session_playerDynamicArray[session_playerCount - 1] = player;
   }
 
@@ -100,7 +106,7 @@ void player_update(FPlayer *old, FPlayer *new) {
 
 uint_fast8_t player_disable(uint16_t id) {
   FPlayer *disableCandidate = player_retrieve(id);
-  if (!(disableCandidate->isActive)) {
+  if (disableCandidate == NULL || !(disableCandidate->isActive)) {
     return 0;
   }
   disableCandidate->isActive = FALSE;

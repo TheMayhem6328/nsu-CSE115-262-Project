@@ -1,4 +1,5 @@
 #include "file_admin.h"
+#include "file_common.h"
 #include "types.h"
 
 #include <stdint.h>
@@ -6,27 +7,18 @@
 
 void file_writeAdmin(FILE *fp, const FAdmin *admin) {
   if (admin->isActive) {
-    fwrite(&admin->id, sizeof(admin->id), 1, fp);
+    file_writeBeUint16(fp, admin->id);
     fwrite(admin->name, 1, NAME_LENGTH, fp);
-    fwrite(&admin->isActive, sizeof(admin->isActive), 1, fp);
+    file_writeBeUint8(fp, (uint8_t)admin->isActive);
   }
 }
 
 void file_readAdmin(FILE *fp, FAdmin *user) {
-  uint16_t id = 0;
-  uint8_t isActive = 0;
-
-  if (fread(&id, sizeof(id), 1, fp) != 1) {
-    id = 0;
-  }
-  user->id = id;
+  user->id = file_readBeUint16(fp);
 
   if (fread(user->name, 1, NAME_LENGTH, fp) != NAME_LENGTH) {
     user->name[0] = '\0';
   }
 
-  if (fread(&isActive, sizeof(isActive), 1, fp) != 1) {
-    isActive = 0;
-  }
-  user->isActive = (EBoolean)isActive;
+  user->isActive = (EBoolean)file_readBeUint8(fp);
 }

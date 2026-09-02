@@ -141,23 +141,31 @@ uint_fast8_t file_saveDataFile(void) {
   file_writeBeUint64(file, playerOffset);
 
   fseek(file, (long)adminOffset, SEEK_SET);
-  for (int i = 0; i < session_enabledAdminCount; ++i) {
-    file_writeAdmin(file, session_adminDynamicArray[i]);
+  for (int i = 0; i < session_adminCount; ++i) {
+    if (session_adminDynamicArray[i]->isActive) {
+      file_writeAdmin(file, session_adminDynamicArray[i]);
+    }
   }
 
   fseek(file, (long)teamOffset, SEEK_SET);
-  for (int i = 0; i < session_enabledTeamCount; ++i) {
-    file_writeTeam(file, session_teamDynamicArray[i]);
+  for (int i = 0; i < session_teamCount; ++i) {
+    if (session_teamDynamicArray[i]->isActive) {
+      file_writeTeam(file, session_teamDynamicArray[i]);
+    }
   }
 
   fseek(file, (long)managerOffset, SEEK_SET);
-  for (int i = 0; i < session_enabledManagerCount; ++i) {
-    file_writeManager(file, session_managerDynamicArray[i]);
+  for (int i = 0; i < session_managerCount; ++i) {
+    if (session_managerDynamicArray[i]->isActive) {
+      file_writeManager(file, session_managerDynamicArray[i]);
+    }
   }
 
   fseek(file, (long)playerOffset, SEEK_SET);
-  for (int i = 0; i < session_enabledPlayerCount; ++i) {
-    file_writePlayer(file, session_playerDynamicArray[i]);
+  for (int i = 0; i < session_playerCount; ++i) {
+    if (session_playerDynamicArray[i]->isActive) {
+      file_writePlayer(file, session_playerDynamicArray[i]);
+    }
   }
 
   fclose(file);

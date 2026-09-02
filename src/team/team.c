@@ -60,7 +60,7 @@ FTeam *team_create(uint16_t id, const char *name) {
     session_teamDynamicArray[0] = malloc(sizeof(FTeam));
     *session_teamDynamicArray[0] = team;
   } else {
-    FTeam **temp = realloc(session_teamDynamicArray, session_teamCount * sizeof(int));
+    FTeam **temp = realloc(session_teamDynamicArray, session_teamCount * sizeof(FTeam*));
     if (temp == NULL) {
         // Handle allocation failure safely
         fprintf(stderr, "Out of memory");
@@ -68,6 +68,12 @@ FTeam *team_create(uint16_t id, const char *name) {
         exit(1);
     }
     session_teamDynamicArray = temp;
+    session_teamDynamicArray[session_teamCount - 1] = malloc(sizeof(FTeam));
+    if (session_teamDynamicArray[session_teamCount - 1] == NULL) {
+        fprintf(stderr, "Out of memory");
+        session_exit();
+        exit(1);
+    }
     *session_teamDynamicArray[session_teamCount - 1] = team;
   }
 
@@ -120,7 +126,7 @@ void team_update(FTeam *old, FTeam *new) {
 
 uint_fast8_t team_disable(uint16_t id) {
   FTeam *disableCandidate = team_retrieve(id);
-  if (!(disableCandidate->isActive)) {
+  if (disableCandidate == NULL || !(disableCandidate->isActive)) {
     return 0;
   }
   disableCandidate->isActive = FALSE;
