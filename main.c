@@ -9,7 +9,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "file.h"
+#include "file_common.h"
 #include "menu.h"
 #include <stdint.h>
 #include <stdio.h>

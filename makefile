@@ -2,9 +2,11 @@ CC := clang
 BUILD_DIR := build
 HEADER_DIR := include
 SRC_DIR := src
-CFLAGS := -g -I$(HEADER_DIR) -std=c99 -Wall -Wextra -pedantic -Wconversion -Wno-unused-function
-HEADERS := $(wildcard $(HEADER_DIR)/*.h)
-SRC := $(wildcard $(SRC_DIR)/*.c)
+DOMAIN_HEADER_DIRS := $(wildcard $(HEADER_DIR)/*)
+DOMAIN_SRC_DIRS := $(wildcard $(SRC_DIR)/*)
+CFLAGS := -g -I$(HEADER_DIR) $(foreach dir,$(DOMAIN_HEADER_DIRS),-I$(dir)) -std=c99 -Wall -Wextra -pedantic -Wconversion -Wno-unused-function
+HEADERS := $(wildcard $(HEADER_DIR)/*.h) $(wildcard $(HEADER_DIR)/*/*.h)
+SRC := $(wildcard $(SRC_DIR)/*/*.c) $(wildcard $(SRC_DIR)/*.c)
 SRC += main.c
 TARGET := program
 .DEFAULT_GOAL := all

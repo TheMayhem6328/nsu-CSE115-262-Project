@@ -7,7 +7,7 @@
 
 #include "menu.h"
 #include "session.h"
-#include "file.h"
+#include "file_common.h"
 #include <stdio.h>
 #include <stdlib.h>
 
