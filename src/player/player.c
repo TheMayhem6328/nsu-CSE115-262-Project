@@ -7,6 +7,8 @@
 //
 // Also, death to Code::Blocks
 
+// TODO: Document the code
+
 #include "player.h"
 #include "session.h"
 #include "types.h"
@@ -104,6 +106,38 @@ void player_update(FPlayer *old, FPlayer *new) {
 
   // TODO: Update runtime data accordingly
   old->teamPtr = NULL;
+}
+
+void player_listPlayersWithoutTeam(void) {
+  puts("\n+-------+----------------------+\n");
+  puts("| ID    | Name                 |");
+  puts("+-------+----------------------+");
+  for (uint_fast8_t i = 0; i < session_playerCount; ++i) {
+    if (session_playerDynamicArray[i]->isActive &&
+        session_playerDynamicArray[i]->teamPtr == NULL) {
+      printf("| %-5u | %-20.20s |\n", session_playerDynamicArray[i]->id,
+             session_playerDynamicArray[i]->name);
+    }
+  }
+  puts("+-------+----------------------+\n");
+}
+
+uint_fast8_t player_leaveTeam(FPlayer *player) {
+  if (player == NULL || player->teamPtr == NULL) return 0;
+  FTeam *team = player->teamPtr;
+  for (uint_fast8_t i = 0; i < team->playerCount; ++i) {
+    if (team->playerIDs[i] == player->id) {
+      for (uint_fast8_t j = i + 1; j < team->playerCount; ++j)
+        team->playerIDs[j - 1] = team->playerIDs[j];
+      team->playerIDs[team->playerCount - 1] = 0;
+      team->playerCount -= 1;
+      player->teamPtr = NULL;
+      team->playerPtrs[team->playerCount] = NULL;
+      return 1;
+    }
+  }
+  player->teamPtr = NULL;
+  return 0;
 }
 
 uint_fast8_t player_disable(uint16_t id) {

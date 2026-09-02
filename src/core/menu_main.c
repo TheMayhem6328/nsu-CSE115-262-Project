@@ -59,11 +59,12 @@ uint_fast8_t menu_main(void) {
   long userChoice;
   char userInput[NAME_LENGTH];
 
+  menu_printHeader("Welcome to CSE115 Football");
   puts("Who do you want to login as?");
-  puts("  0: Save and Exit");
-  puts("  1: Admin");
-  puts("  2: Manager");
-  puts("  3: Player");
+  menu_printOption("0", "Save and Exit");
+  menu_printOption("1", "Admin");
+  menu_printOption("2", "Manager");
+  menu_printOption("3", "Player");
   printf("Your choice: ");
   if (fgets(userInput, sizeof(userInput), stdin) == NULL)
     return 0;

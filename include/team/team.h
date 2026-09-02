@@ -7,6 +7,8 @@
 //
 // Also, death to Code::Blocks
 
+// TODO: Document the code
+
 #ifndef M6328_TEAM
 #define M6328_TEAM
 
@@ -17,6 +19,7 @@
 FTeam *team_create(uint16_t id, const char *name);
 FTeam *team_retrieve(uint16_t id);
 void team_update(FTeam *old, FTeam *new);
+uint_fast8_t team_assignManager(FTeam *team, FManager *manager);
 uint_fast8_t team_disable(uint16_t id);
 
 // Team management

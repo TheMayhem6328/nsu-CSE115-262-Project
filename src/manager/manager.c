@@ -7,6 +7,8 @@
 //
 // Also, death to Code::Blocks
 
+// TODO: Document the code
+
 #include "manager.h"
 #include "session.h"
 #include "player.h"
@@ -81,6 +83,31 @@ void manager_update(FManager *old, FManager *new) {
   old->teamPtr = NULL;
 }
 
+void manager_listManagersWithoutTeam(void) {
+  puts("\n+-------+----------------------+\n");
+  puts("| ID    | Name                 |");
+  puts("+-------+----------------------+");
+  for (uint_fast8_t i = 0; i < session_managerCount; ++i) {
+    if (session_managerDynamicArray[i]->isActive &&
+        session_managerDynamicArray[i]->teamPtr == NULL) {
+      printf("| %-5u | %-20.20s |\n", session_managerDynamicArray[i]->id,
+             session_managerDynamicArray[i]->name);
+    }
+  }
+  puts("+-------+----------------------+\n");
+}
+
+uint_fast8_t manager_assignTeam(FManager *manager, FTeam *team) {
+  if (manager == NULL || team == NULL || !manager->isActive ||
+      !team->isActive || (manager->teamPtr != NULL && manager->teamPtr != team))
+    return 0;
+  if (team->manager != NULL && team->manager != manager) return 0;
+  manager->teamPtr = team;
+  team->manager = manager;
+  team->managerID = manager->id;
+  return 1;
+}
+
 void manager_addPlayerToTeam(uint16_t id) {
   FManager *manager = (FManager *)USER_CURRENT.userObj;
   FPlayer *player = player_retrieve(id);
@@ -98,6 +125,7 @@ void manager_addPlayerToTeam(uint16_t id) {
     return;
 
   team->playerIDs[team->playerCount] = (uint8_t)id;
+  team->playerPtrs[team->playerCount] = player;
   team->playerCount += 1;
   player->teamPtr = team;
 }

@@ -7,12 +7,16 @@
 //
 // Also, death to Code::Blocks
 
+// TODO: Document the code
+
 #include "file_common.h"
+#include "admin.h"
 #include "file_admin.h"
 #include "file_manager.h"
 #include "file_player.h"
 #include "file_team.h"
-#include "admin.h"
+#include "manager.h"
+#include "player.h"
 #include "session.h"
 #include "types.h"
 
@@ -24,28 +28,18 @@
 #define UINT8_BYTES 1u
 #define UINT16_BYTES 2u
 
-#define FILE_RECORD_SIZE_ADMIN                                                 \
-  (                                                                           \
-    UINT16_BYTES + NAME_LENGTH + UINT8_BYTES                                  \
-  )
+#define FILE_RECORD_SIZE_ADMIN (UINT16_BYTES + NAME_LENGTH + UINT8_BYTES)
 
 #define FILE_RECORD_SIZE_TEAM                                                  \
-  (                                                                           \
-    UINT16_BYTES + NAME_LENGTH + UINT8_BYTES + 2u * NAME_LENGTH +             \
-    7u * UINT16_BYTES + UINT16_BYTES + UINT8_BYTES +                           \
-    MAX_TEAM_PLAYERS * UINT8_BYTES                                            \
-  )
+  (UINT16_BYTES + NAME_LENGTH + UINT8_BYTES + 2u * NAME_LENGTH +               \
+   7u * UINT16_BYTES + UINT16_BYTES + UINT8_BYTES +                            \
+   MAX_TEAM_PLAYERS * UINT8_BYTES)
 
-#define FILE_RECORD_SIZE_MANAGER                                               \
-  (                                                                           \
-    UINT16_BYTES + NAME_LENGTH + UINT8_BYTES                                  \
-  )
+#define FILE_RECORD_SIZE_MANAGER (UINT16_BYTES + NAME_LENGTH + UINT8_BYTES)
 
 #define FILE_RECORD_SIZE_PLAYER                                                \
-  (                                                                           \
-    UINT16_BYTES + NAME_LENGTH + UINT8_BYTES + 2u * UINT8_BYTES +             \
-    3u * UINT8_BYTES + 3u * UINT16_BYTES                                     \
-  )
+  (UINT16_BYTES + NAME_LENGTH + UINT8_BYTES + 2u * UINT8_BYTES +               \
+   3u * UINT8_BYTES + 3u * UINT16_BYTES)
 
 void file_writeBeUint64(FILE *fp, uint64_t val) {
   uint8_t buf[8];
@@ -67,9 +61,7 @@ void file_writeBeUint16(FILE *fp, uint16_t val) {
   fwrite(buf, 1, 2, fp);
 }
 
-void file_writeBeUint8(FILE *fp, uint8_t val) {
-  fwrite(&val, 1, 1, fp);
-}
+void file_writeBeUint8(FILE *fp, uint8_t val) { fwrite(&val, 1, 1, fp); }
 
 uint64_t file_readBeUint64(FILE *fp) {
   uint8_t buf[8];
@@ -129,6 +121,10 @@ uint_fast8_t file_createDataFile(void) {
 
 uint_fast8_t file_saveDataFile(void) {
   FILE *file = fopen(DATAFILE, "wb");
+  uint_fast8_t savedAdminCount = 0;
+  uint_fast8_t savedTeamCount = 0;
+  uint_fast8_t savedManagerCount = 0;
+  uint_fast8_t savedPlayerCount = 0;
   if (file == NULL) {
     return 0;
   }
@@ -141,9 +137,9 @@ uint_fast8_t file_saveDataFile(void) {
                                           FILE_RECORD_SIZE_ADMIN;
   uint64_t managerOffset =
       teamOffset + (uint64_t)session_enabledTeamCount * FILE_RECORD_SIZE_TEAM;
-  uint64_t playerOffset = managerOffset +
-                          (uint64_t)session_enabledManagerCount *
-                              FILE_RECORD_SIZE_MANAGER;
+  uint64_t playerOffset =
+      managerOffset +
+      (uint64_t)session_enabledManagerCount * FILE_RECORD_SIZE_MANAGER;
 
   file_writeBeUint64(file, teamOffset);
   file_writeBeUint64(file, managerOffset);
@@ -153,6 +149,7 @@ uint_fast8_t file_saveDataFile(void) {
   for (int i = 0; i < session_adminCount; ++i) {
     if (session_adminDynamicArray[i]->isActive) {
       file_writeAdmin(file, session_adminDynamicArray[i]);
+      savedAdminCount += 1;
     }
   }
 
@@ -160,6 +157,7 @@ uint_fast8_t file_saveDataFile(void) {
   for (int i = 0; i < session_teamCount; ++i) {
     if (session_teamDynamicArray[i]->isActive) {
       file_writeTeam(file, session_teamDynamicArray[i]);
+      savedTeamCount += 1;
     }
   }
 
@@ -167,6 +165,7 @@ uint_fast8_t file_saveDataFile(void) {
   for (int i = 0; i < session_managerCount; ++i) {
     if (session_managerDynamicArray[i]->isActive) {
       file_writeManager(file, session_managerDynamicArray[i]);
+      savedManagerCount += 1;
     }
   }
 
@@ -174,10 +173,14 @@ uint_fast8_t file_saveDataFile(void) {
   for (int i = 0; i < session_playerCount; ++i) {
     if (session_playerDynamicArray[i]->isActive) {
       file_writePlayer(file, session_playerDynamicArray[i]);
+      savedPlayerCount += 1;
     }
   }
 
   fclose(file);
+  printf("Saved: %u admins, %u teams, %u managers, %u players.\n",
+         (unsigned int)savedAdminCount, (unsigned int)savedTeamCount,
+         (unsigned int)savedManagerCount, (unsigned int)savedPlayerCount);
   return 1;
 }
 
@@ -222,8 +225,10 @@ uint_fast8_t file_loadDataFile(void) {
     return 0;
   }
 
-  session_adminCount = (uint_fast8_t)((teamOffset - adminOffset) / FILE_RECORD_SIZE_ADMIN);
-  session_teamCount = (uint_fast8_t)((managerOffset - teamOffset) / FILE_RECORD_SIZE_TEAM);
+  session_adminCount =
+      (uint_fast8_t)((teamOffset - adminOffset) / FILE_RECORD_SIZE_ADMIN);
+  session_teamCount =
+      (uint_fast8_t)((managerOffset - teamOffset) / FILE_RECORD_SIZE_TEAM);
   session_managerCount =
       (uint_fast8_t)((playerOffset - managerOffset) / FILE_RECORD_SIZE_MANAGER);
   session_playerCount =
@@ -314,6 +319,30 @@ uint_fast8_t file_loadDataFile(void) {
     }
   }
 
+  for (uint_fast8_t i = 0; i < session_teamCount; ++i) {
+    FTeam *team = session_teamDynamicArray[i];
+    team->manager = NULL;
+    for (uint_fast8_t j = 0; j < MAX_TEAM_PLAYERS; ++j)
+      team->playerPtrs[j] = NULL;
+    if (team->managerID != 0) {
+      FManager *manager = manager_retrieve(team->managerID);
+      if (manager != NULL) {
+        team->manager = manager;
+        manager->teamPtr = team;
+      }
+    }
+    for (uint_fast8_t j = 0; j < team->playerCount; ++j) {
+      FPlayer *player = player_retrieve(team->playerIDs[j]);
+      if (player != NULL) {
+        team->playerPtrs[j] = player;
+        player->teamPtr = team;
+      }
+    }
+  }
+
   fclose(fp);
+  printf("Loaded: %u admins, %u teams, %u managers, %u players.\n",
+         (unsigned int)session_adminCount, (unsigned int)session_teamCount,
+         (unsigned int)session_managerCount, (unsigned int)session_playerCount);
   return 1;
 }

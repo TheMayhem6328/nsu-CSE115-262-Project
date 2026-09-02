@@ -7,6 +7,8 @@
 //
 // Also, death to Code::Blocks
 
+// TODO: Document the code
+
 #ifndef M6328_FILE_COMMON
 #define M6328_FILE_COMMON
 

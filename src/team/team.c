@@ -7,6 +7,8 @@
 //
 // Also, death to Code::Blocks
 
+// TODO: Document the code
+
 #include "team.h"
 #include "session.h"
 #include "types.h"
@@ -124,6 +126,31 @@ void team_update(FTeam *old, FTeam *new) {
   for (uint8_t i = 0; i < MAX_TEAM_PLAYERS; ++i) {
     old->playerPtrs[i] = NULL;
   }
+}
+
+void team_listTeamsWithoutManager(void) {
+  puts("\n+-------+----------------------+\n");
+  puts("| ID    | Name                 |");
+  puts("+-------+----------------------+");
+  for (uint_fast8_t i = 0; i < session_teamCount; ++i) {
+    if (session_teamDynamicArray[i]->isActive &&
+        session_teamDynamicArray[i]->managerID == 0) {
+      printf("| %-5u | %-20.20s |\n", session_teamDynamicArray[i]->id,
+             session_teamDynamicArray[i]->name);
+    }
+  }
+  puts("+-------+----------------------+\n");
+}
+
+uint_fast8_t team_assignManager(FTeam *team, FManager *manager) {
+  if (team == NULL || manager == NULL || !team->isActive ||
+      !manager->isActive || (team->manager != NULL && team->manager != manager) ||
+      (manager->teamPtr != NULL && manager->teamPtr != team))
+    return 0;
+  team->manager = manager;
+  team->managerID = manager->id;
+  manager->teamPtr = team;
+  return 1;
 }
 
 uint_fast8_t team_disable(uint16_t id) {
