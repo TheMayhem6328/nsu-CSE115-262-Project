@@ -9,11 +9,13 @@
 #include "session.h"
 #include "types.h"
 #include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 //// Basic CRUD
 
-FPlayer player_create(uint16_t id, const char *name) {
+FPlayer *player_create(uint16_t id, const char *name) {
   FPlayer player;
 
   // Basics
@@ -38,7 +40,28 @@ FPlayer player_create(uint16_t id, const char *name) {
   // Runtime data
   player.teamPtr = NULL;
 
-  return player;
+  // Increment session counters
+  session_enabledAdminCount += 1;
+  session_playerCount += 1;
+
+  // Append to session array
+  if (session_playerCount == 1) {
+    session_playerDynamicArray = malloc(sizeof(FPlayer *) * session_playerCount);
+    session_playerDynamicArray[0] = malloc(sizeof(FPlayer));
+    *session_playerDynamicArray[0] = player;
+  } else {
+    FPlayer **temp = realloc(session_playerDynamicArray, session_playerCount * sizeof(int));
+    if (temp == NULL) {
+        // Handle allocation failure safely
+        fprintf(stderr, "Out of memory");
+        session_exit();
+        exit(1);
+    }
+    session_playerDynamicArray = temp;
+    *session_playerDynamicArray[session_playerCount - 1] = player;
+  }
+
+  return session_playerDynamicArray[session_playerCount - 1];
 }
 
 FPlayer *player_retrieve(uint16_t id) {
@@ -56,7 +79,6 @@ void player_update(FPlayer *old, FPlayer *new) {
   // Basics
   old->id = new->id;
   strncpy(old->name, new->name, NAME_LENGTH);
-  old->isActive = new->isActive;
 
   // Field identifier
   old->position = new->position;
@@ -78,8 +100,10 @@ void player_update(FPlayer *old, FPlayer *new) {
 
 uint_fast8_t player_disable(uint16_t id) {
   FPlayer *disableCandidate = player_retrieve(id);
+  if (!(disableCandidate->isActive)) {
+    return 0;
+  }
   disableCandidate->isActive = FALSE;
+  session_enabledPlayerCount -= 1;
   return 1;
-  // TODO:
-  // Adjust arrays and counts accordingly
 }

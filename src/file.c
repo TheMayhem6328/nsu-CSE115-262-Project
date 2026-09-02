@@ -157,7 +157,7 @@ static uint8_t readBeUint8(FILE *fp) {
 // Write data to file
 
 static void writeAdmin(FILE *fp, const FAdmin *admin) {
-  if (!(admin->isActive)) {
+  if ((admin->isActive)) {
     // Basics
     writeBeUint16(fp, admin->id);
     fwrite(admin->name, 1, NAME_LENGTH, fp);
@@ -166,7 +166,7 @@ static void writeAdmin(FILE *fp, const FAdmin *admin) {
 }
 
 static void writeTeam(FILE *fp, const FTeam *team) {
-  if (!(team->isActive)) {
+  if ((team->isActive)) {
     // Basics
     writeBeUint16(fp, team->id);
     fwrite(team->name, 1, NAME_LENGTH, fp);
@@ -196,7 +196,7 @@ static void writeTeam(FILE *fp, const FTeam *team) {
 }
 
 static void writeManager(FILE *fp, const FManager *manager) {
-  if (!(manager->isActive)) {
+  if ((manager->isActive)) {
     // Basics
     writeBeUint16(fp, manager->id);
     fwrite(manager->name, 1, NAME_LENGTH, fp);
@@ -205,7 +205,7 @@ static void writeManager(FILE *fp, const FManager *manager) {
 }
 
 static void writePlayer(FILE *fp, const FPlayer *player) {
-  if (!(player->isActive)) {
+  if ((player->isActive)) {
     // Basics
     writeBeUint16(fp, player->id);
     fwrite(player->name, 1, NAME_LENGTH, fp);
@@ -303,62 +303,6 @@ static void readPlayer(FILE *fp, FPlayer *player) {
   player->teamPtr = NULL;
 }
 
-// Calculate data record size
-// Commented out in favor of compiler macros
-// Since values are constant
-
-// static size_t recordSizeAdmin(void) {
-//   return
-//       // Basics
-//       sizeof(uint16_t)   // id
-//       + NAME_LENGTH      // name
-//       + sizeof(uint8_t); // isActive
-// }
-
-// static size_t recordSizeTeam(void) {
-//   return
-//       // Basics
-//       sizeof(uint16_t)  // id
-//       + NAME_LENGTH     // name
-//       + sizeof(uint8_t) // isActive
-
-//       // Location metadata
-//       + 2 * NAME_LENGTH // (All of them)
-
-//       // Season stats
-//       + 7 * sizeof(uint16_t) // (All of them)
-
-//       // Team information
-//       + sizeof(uint16_t)                    // managerID
-//       + sizeof(uint8_t)                     // playerCount
-//       + MAX_TEAM_PLAYERS * sizeof(uint8_t); // playerIDs
-// }
-
-// static size_t recordSizeManager(void) {
-//   return
-//       // Basics
-//       sizeof(uint16_t)   // id
-//       + NAME_LENGTH      // name
-//       + sizeof(uint8_t); // isActive
-// }
-
-// static size_t recordSizePlayer(void) {
-//   return
-//       // Basics
-//       sizeof(uint16_t)  // id
-//       + NAME_LENGTH     // name
-//       + sizeof(uint8_t) // isActive
-
-//       // Field identifier
-//       + 2 * sizeof(uint8_t) // (All of them)
-
-//       // Personal metadata
-//       + 3 * sizeof(uint8_t) // (All of them)
-
-//       // Season stats
-//       + 3 * sizeof(uint16_t); // (All of them)
-// }
-
 //// Functions
 
 // File Management
@@ -377,7 +321,6 @@ uint_fast8_t file_dataFileExists(void) {
 
 uint_fast8_t file_createDataFile(void) {
   // Init variables
-  FAdmin initialAdmin;
   char value[NAME_LENGTH] = {0};
   uint16_t id;
 
@@ -393,14 +336,7 @@ uint_fast8_t file_createDataFile(void) {
   value[strcspn(value, "\n")] = '\0';
 
   // Create initial admin struct
-  initialAdmin = admin_create(id, value);
-
-  // Add to session memory
-  session_adminEnabledCount += 1;
-  session_adminCount += 1;
-  session_adminDynamicArray = malloc(sizeof(FAdmin *) * session_adminCount);
-  session_adminDynamicArray[0] = malloc(sizeof(FAdmin));
-  *session_adminDynamicArray[0] = initialAdmin;
+  admin_create(id, value);
 
   // Save contents to file and return success
   return file_saveDataFile();
@@ -420,12 +356,13 @@ uint_fast8_t file_saveDataFile(void) {
 
   // Offsets
   uint64_t adminOffset = 0x21;
-  uint64_t teamOffset =
-      adminOffset + (uint64_t)session_adminCount * FILE_RECORD_SIZE_ADMIN;
+  uint64_t teamOffset = adminOffset + (uint64_t)session_enabledAdminCount *
+                                          FILE_RECORD_SIZE_ADMIN;
   uint64_t managerOffset =
-      teamOffset + (uint64_t)session_teamCount * FILE_RECORD_SIZE_TEAM;
+      teamOffset + (uint64_t)session_enabledTeamCount * FILE_RECORD_SIZE_TEAM;
   uint64_t playerOffset =
-      managerOffset + (uint64_t)session_managerCount * FILE_RECORD_SIZE_MANAGER;
+      managerOffset +
+      (uint64_t)session_enabledManagerCount * FILE_RECORD_SIZE_MANAGER;
 
   // Write offsets
   writeBeUint64(file, teamOffset);
@@ -436,25 +373,25 @@ uint_fast8_t file_saveDataFile(void) {
 
   // Admin
   fseek(file, (long)adminOffset, SEEK_SET);
-  for (int i = 0; i < session_adminCount; ++i) {
+  for (int i = 0; i < session_enabledAdminCount; ++i) {
     writeAdmin(file, session_adminDynamicArray[i]);
   }
 
   // Team
   fseek(file, (long)teamOffset, SEEK_SET);
-  for (int i = 0; i < session_teamCount; ++i) {
+  for (int i = 0; i < session_enabledTeamCount; ++i) {
     writeTeam(file, session_teamDynamicArray[i]);
   }
 
   // Manager
   fseek(file, (long)managerOffset, SEEK_SET);
-  for (int i = 0; i < session_managerCount; ++i) {
+  for (int i = 0; i < session_enabledManagerCount; ++i) {
     writeManager(file, session_managerDynamicArray[i]);
   }
 
   // Player
   fseek(file, (long)playerOffset, SEEK_SET);
-  for (int i = 0; i < session_playerCount; ++i) {
+  for (int i = 0; i < session_enabledPlayerCount; ++i) {
     writePlayer(file, session_playerDynamicArray[i]);
   }
 
@@ -522,6 +459,12 @@ uint_fast8_t file_loadDataFile(void) {
                          ? ((uint64_t)fileSize - playerOffset) /
                                FILE_RECORD_SIZE_PLAYER
                          : 0);
+
+  // Calculate counts
+  session_enabledAdminCount = session_adminCount;
+  session_enabledTeamCount = session_teamCount;
+  session_enabledManagerCount = session_managerCount;
+  session_enabledPlayerCount = session_playerCount;
 
   // Initialize session arrays
   session_adminDynamicArray = NULL;

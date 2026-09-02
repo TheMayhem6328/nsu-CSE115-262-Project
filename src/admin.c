@@ -10,17 +10,43 @@
 #include "types.h"
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 //// Basic CRUD
 
-FAdmin admin_create(uint16_t id, const char *name) {
-  FAdmin user;
-  user.id = id;
-  strncpy(user.name, name, NAME_LENGTH);
-  user.isActive = TRUE;
+FAdmin *admin_create(uint16_t id, const char *name) {
+  FAdmin admin;
 
-  return user;
+  // Basics
+  admin.id = id;
+  strncpy(admin.name, name, NAME_LENGTH);
+  admin.isActive = TRUE;
+
+  // Increment session counters
+  session_enabledAdminCount += 1;
+  session_adminCount += 1;
+
+  // Append to session array
+  if (session_adminCount == 1) {
+    session_adminDynamicArray = malloc(sizeof(FAdmin *) * session_adminCount);
+    session_adminDynamicArray[0] = malloc(sizeof(FAdmin));
+    *session_adminDynamicArray[0] = admin;
+  } else {
+    FAdmin **temp =
+        realloc(session_adminDynamicArray, session_adminCount * sizeof(int));
+    if (temp == NULL) {
+      // Handle allocation failure safely
+      fprintf(stderr, "Out of memory");
+      session_exit();
+      exit(1);
+    }
+    session_adminDynamicArray = temp;
+    *session_adminDynamicArray[session_adminCount - 1] = admin;
+  }
+
+  return session_adminDynamicArray[session_adminCount - 1];
 }
 
 FAdmin *admin_retrieve(uint16_t id) {
@@ -37,18 +63,19 @@ FAdmin *admin_retrieve(uint16_t id) {
 void admin_update(FAdmin *old, FAdmin *new) {
   old->id = new->id;
   strncpy(old->name, new->name, NAME_LENGTH);
-  old->isActive = new->isActive;
 }
 
 uint_fast8_t admin_disable(uint16_t id) {
   // Do not let user disable all admins
-  if (session_adminEnabledCount == 1) {
+  if (session_enabledAdminCount == 1) {
     return 0;
   }
 
   FAdmin *disableCandidate = admin_retrieve(id);
+  if (!(disableCandidate->isActive)) {
+    return 0;
+  }
   disableCandidate->isActive = FALSE;
+  session_enabledAdminCount -= 1;
   return 1;
-  // TODO:
-  // Adjust arrays and counts accordingly
 }

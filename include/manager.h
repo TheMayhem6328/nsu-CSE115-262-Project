@@ -12,7 +12,7 @@
 #include <stdint.h>
 
 // Basic CRUD
-FManager manager_create(uint16_t id, const char *name);
+FManager *manager_create(uint16_t id, const char *name);
 FManager *manager_retrieve(uint16_t id);
 void manager_update(FManager *old, FManager *new);
 uint_fast8_t manager_disable(uint16_t id);

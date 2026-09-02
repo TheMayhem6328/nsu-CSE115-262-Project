@@ -16,7 +16,10 @@ FUser USER_CURRENT = {USER_UNDEFINED, NULL};
 
 //// Counter variables
 
-uint_fast8_t session_adminEnabledCount = 0;
+uint_fast8_t session_enabledAdminCount = 0;
+uint_fast8_t session_enabledTeamCount = 0;
+uint_fast8_t session_enabledManagerCount = 0;
+uint_fast8_t session_enabledPlayerCount = 0;
 uint_fast8_t session_adminCount = 0;
 uint_fast8_t session_teamCount = 0;
 uint_fast8_t session_managerCount = 0;
@@ -52,31 +55,23 @@ uint_fast8_t session_login(EUserType type, uint16_t id) {
 }
 
 uint_fast8_t session_exit(void) {
-  //// Clean up dynamically allocated memory
+//// Clean up dynamically allocated memory
 
-  // Admin
-  for (int i = 0; i < session_adminCount; i++) {
-    free(session_adminDynamicArray[i]);
+// Macro function for cleanup
+#define CLEANUP_ARRAY(arr, count)                                              \
+  if ((arr) != NULL) {                                                         \
+    for (int i = 0; i < (count); i++) {                                        \
+      free((arr)[i]);                                                          \
+    }                                                                          \
+    free(arr);                                                                 \
   }
-  free(session_adminDynamicArray);
 
-  // Team
-  for (int i = 0; i < session_teamCount; i++) {
-    free(session_teamDynamicArray[i]);
-  }
-  free(session_teamDynamicArray);
-
-  // Manager
-  for (int i = 0; i < session_managerCount; i++) {
-    free(session_managerDynamicArray[i]);
-  }
-  free(session_managerDynamicArray);
-
-  // Player
-  for (int i = 0; i < session_playerCount; i++) {
-    free(session_playerDynamicArray[i]);
-  }
-  free(session_playerDynamicArray);
+  // Actually clean up the arrays
+  CLEANUP_ARRAY(session_adminDynamicArray, session_adminCount);
+  CLEANUP_ARRAY(session_teamDynamicArray, session_teamCount);
+  CLEANUP_ARRAY(session_managerDynamicArray, session_managerCount);
+  CLEANUP_ARRAY(session_playerDynamicArray, session_playerCount);
+#undef CLEANUP_ARRAY
 
   return 0;
 }

@@ -9,11 +9,13 @@
 #include "session.h"
 #include "types.h"
 #include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 //// Basic CRUD
 
-FTeam team_create(uint16_t id, const char *name) {
+FTeam *team_create(uint16_t id, const char *name) {
   FTeam team;
 
   // Basics
@@ -48,7 +50,28 @@ FTeam team_create(uint16_t id, const char *name) {
     team.playerPtrs[i] = NULL;
   }
 
-  return team;
+  // Increment session counters
+  session_enabledTeamCount += 1;
+  session_teamCount += 1;
+
+  // Append to session array
+  if (session_teamCount == 1) {
+    session_teamDynamicArray = malloc(sizeof(FTeam *) * session_teamCount);
+    session_teamDynamicArray[0] = malloc(sizeof(FTeam));
+    *session_teamDynamicArray[0] = team;
+  } else {
+    FTeam **temp = realloc(session_teamDynamicArray, session_teamCount * sizeof(int));
+    if (temp == NULL) {
+        // Handle allocation failure safely
+        fprintf(stderr, "Out of memory");
+        session_exit();
+        exit(1);
+    }
+    session_teamDynamicArray = temp;
+    *session_teamDynamicArray[session_teamCount - 1] = team;
+  }
+
+  return session_teamDynamicArray[session_teamCount - 1];
 }
 
 FTeam *team_retrieve(uint16_t id) {
@@ -66,7 +89,6 @@ void team_update(FTeam *old, FTeam *new) {
   // Basics
   old->id = new->id;
   strncpy(old->name, new->name, NAME_LENGTH);
-  old->isActive = TRUE;
 
   // Location metadata
   strncpy(old->city, new->city, NAME_LENGTH);
@@ -98,8 +120,10 @@ void team_update(FTeam *old, FTeam *new) {
 
 uint_fast8_t team_disable(uint16_t id) {
   FTeam *disableCandidate = team_retrieve(id);
+  if (!(disableCandidate->isActive)) {
+    return 0;
+  }
   disableCandidate->isActive = FALSE;
+  session_enabledTeamCount -= 1;
   return 1;
-  // TODO:
-  // Adjust arrays and counts accordingly
 }

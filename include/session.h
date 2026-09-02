@@ -13,7 +13,10 @@
 
 //// Counter variables
 
-extern uint_fast8_t session_adminEnabledCount;
+extern uint_fast8_t session_enabledAdminCount;
+extern uint_fast8_t session_enabledTeamCount;
+extern uint_fast8_t session_enabledManagerCount;
+extern uint_fast8_t session_enabledPlayerCount;
 extern uint_fast8_t session_adminCount;
 extern uint_fast8_t session_teamCount;
 extern uint_fast8_t session_managerCount;

@@ -12,7 +12,7 @@
 #include <stdint.h>
 
 // Basic CRUD
-FAdmin admin_create(uint16_t id, const char *name);
+FAdmin *admin_create(uint16_t id, const char *name);
 FAdmin *admin_retrieve(uint16_t id);
 void admin_update(FAdmin *old, FAdmin *new);
 uint_fast8_t admin_disable(uint16_t id);

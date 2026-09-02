@@ -12,7 +12,7 @@
 #include <stdint.h>
 
 // Basic CRUD
-FPlayer player_create(uint16_t id, const char *name);
+FPlayer *player_create(uint16_t id, const char *name);
 FPlayer *player_retrieve(uint16_t id);
 void player_update(FPlayer *old, FPlayer *new);
 uint_fast8_t player_disable(uint16_t id);

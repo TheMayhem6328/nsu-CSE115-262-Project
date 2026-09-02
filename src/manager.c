@@ -9,11 +9,13 @@
 #include "session.h"
 #include "types.h"
 #include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 //// Basic CRUD
 
-FManager manager_create(uint16_t id, const char *name) {
+FManager *manager_create(uint16_t id, const char *name) {
   FManager manager;
 
   // Basics
@@ -24,7 +26,30 @@ FManager manager_create(uint16_t id, const char *name) {
   // Runtime data
   manager.teamPtr = NULL;
 
-  return manager;
+  // Increment session counters
+  session_enabledAdminCount += 1;
+  session_managerCount += 1;
+
+  // Append to session array
+  if (session_managerCount == 1) {
+    session_managerDynamicArray =
+        malloc(sizeof(FManager *) * session_managerCount);
+    session_managerDynamicArray[0] = malloc(sizeof(FManager));
+    *session_managerDynamicArray[0] = manager;
+  } else {
+    FManager **temp = realloc(session_managerDynamicArray,
+                              session_managerCount * sizeof(int));
+    if (temp == NULL) {
+      // Handle allocation failure safely
+      fprintf(stderr, "Out of memory");
+      session_exit();
+      exit(1);
+    }
+    session_managerDynamicArray = temp;
+    *session_managerDynamicArray[session_managerCount - 1] = manager;
+  }
+
+  return session_managerDynamicArray[session_managerCount - 1];
 }
 
 FManager *manager_retrieve(uint16_t id) {
@@ -42,7 +67,6 @@ void manager_update(FManager *old, FManager *new) {
   // Basics
   old->id = new->id;
   strncpy(old->name, new->name, NAME_LENGTH);
-  old->isActive = new->isActive;
 
   // TODO: Update runtime data accordingly
   old->teamPtr = NULL;
@@ -50,8 +74,10 @@ void manager_update(FManager *old, FManager *new) {
 
 uint_fast8_t manager_disable(uint16_t id) {
   FManager *disableCandidate = manager_retrieve(id);
+  if (!(disableCandidate->isActive)) {
+    return 0;
+  }
   disableCandidate->isActive = FALSE;
+  session_enabledManagerCount -= 1;
   return 1;
-  // TODO:
-  // Adjust arrays and counts accordingly
 }
