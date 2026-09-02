@@ -53,8 +53,10 @@ FTeam team_create(uint16_t id, const char *name) {
 
 FTeam *team_retrieve(uint16_t id) {
   for (int i = 0; i < session_teamCount; i++) {
-    if (session_teamDynamicArray[i]->id == id) {
-      return session_teamDynamicArray[i];
+    if (session_teamDynamicArray[i]->isActive) {
+      if (session_teamDynamicArray[i]->id == id) {
+        return session_teamDynamicArray[i];
+      }
     }
   }
   return NULL;
@@ -94,10 +96,10 @@ void team_update(FTeam *old, FTeam *new) {
   }
 }
 
-void team_disable(uint16_t id) {
+uint_fast8_t team_disable(uint16_t id) {
   FTeam *disableCandidate = team_retrieve(id);
   disableCandidate->isActive = FALSE;
+  return 1;
   // TODO:
-  // Stop accessing disabled anywhere, including lookups and file write
-  // Also adjust arrays and counts
+  // Adjust arrays and counts accordingly
 }

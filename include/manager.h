@@ -15,8 +15,7 @@
 FManager manager_create(uint16_t id, const char *name);
 FManager *manager_retrieve(uint16_t id);
 void manager_update(FManager *old, FManager *new);
-void manager_disable(uint16_t id); // TODO: Stop accessing disabled anywhere,
-                                   // including lookups and file write
+uint_fast8_t manager_disable(uint16_t id);
 
 // Team Management
 void manager_addPlayerToTeam(uint16_t id);

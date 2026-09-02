@@ -43,8 +43,10 @@ FPlayer player_create(uint16_t id, const char *name) {
 
 FPlayer *player_retrieve(uint16_t id) {
   for (int i = 0; i < session_playerCount; i++) {
-    if (session_playerDynamicArray[i]->id == id) {
-      return session_playerDynamicArray[i];
+    if (session_playerDynamicArray[i]->isActive) {
+      if (session_playerDynamicArray[i]->id == id) {
+        return session_playerDynamicArray[i];
+      }
     }
   }
   return NULL;
@@ -74,10 +76,10 @@ void player_update(FPlayer *old, FPlayer *new) {
   old->teamPtr = NULL;
 }
 
-void player_disable(uint16_t id) {
+uint_fast8_t player_disable(uint16_t id) {
   FPlayer *disableCandidate = player_retrieve(id);
   disableCandidate->isActive = FALSE;
+  return 1;
   // TODO:
-  // Stop accessing disabled anywhere, including lookups and file write
-  // Also adjust arrays and counts
+  // Adjust arrays and counts accordingly
 }

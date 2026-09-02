@@ -29,8 +29,10 @@ FManager manager_create(uint16_t id, const char *name) {
 
 FManager *manager_retrieve(uint16_t id) {
   for (int i = 0; i < session_managerCount; i++) {
-    if (session_managerDynamicArray[i]->id == id) {
-      return session_managerDynamicArray[i];
+    if (session_managerDynamicArray[i]->isActive) {
+      if (session_managerDynamicArray[i]->id == id) {
+        return session_managerDynamicArray[i];
+      }
     }
   }
   return NULL;
@@ -46,10 +48,10 @@ void manager_update(FManager *old, FManager *new) {
   old->teamPtr = NULL;
 }
 
-void manager_disable(uint16_t id) {
+uint_fast8_t manager_disable(uint16_t id) {
   FManager *disableCandidate = manager_retrieve(id);
   disableCandidate->isActive = FALSE;
+  return 1;
   // TODO:
-  // Stop accessing disabled anywhere, including lookups and file write
-  // Also adjust arrays and counts
+  // Adjust arrays and counts accordingly
 }

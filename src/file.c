@@ -156,67 +156,75 @@ static uint8_t readBeUint8(FILE *fp) {
 
 // Write data to file
 
-static void writeAdmin(FILE *fp, const FAdmin *user) {
-  // Basics
-  writeBeUint16(fp, user->id);
-  fwrite(user->name, 1, NAME_LENGTH, fp);
-  writeBeUint8(fp, (uint8_t)user->isActive);
+static void writeAdmin(FILE *fp, const FAdmin *admin) {
+  if (!(admin->isActive)) {
+    // Basics
+    writeBeUint16(fp, admin->id);
+    fwrite(admin->name, 1, NAME_LENGTH, fp);
+    writeBeUint8(fp, (uint8_t)admin->isActive);
+  }
 }
 
 static void writeTeam(FILE *fp, const FTeam *team) {
-  // Basics
-  writeBeUint16(fp, team->id);
-  fwrite(team->name, 1, NAME_LENGTH, fp);
-  writeBeUint8(fp, (uint8_t)team->isActive);
+  if (!(team->isActive)) {
+    // Basics
+    writeBeUint16(fp, team->id);
+    fwrite(team->name, 1, NAME_LENGTH, fp);
+    writeBeUint8(fp, (uint8_t)team->isActive);
 
-  // Location metadata
-  fwrite(team->city, 1, NAME_LENGTH, fp);
-  fwrite(team->stadium, 1, NAME_LENGTH, fp);
+    // Location metadata
+    fwrite(team->city, 1, NAME_LENGTH, fp);
+    fwrite(team->stadium, 1, NAME_LENGTH, fp);
 
-  // Season stats
-  writeBeUint16(fp, team->matchesPlayed);
-  writeBeUint16(fp, team->wins);
-  writeBeUint16(fp, team->draws);
-  writeBeUint16(fp, team->losses);
-  writeBeUint16(fp, team->goalsFor);
-  writeBeUint16(fp, team->goalsAgainst);
-  writeBeUint16(fp, team->points);
+    // Season stats
+    writeBeUint16(fp, team->matchesPlayed);
+    writeBeUint16(fp, team->wins);
+    writeBeUint16(fp, team->draws);
+    writeBeUint16(fp, team->losses);
+    writeBeUint16(fp, team->goalsFor);
+    writeBeUint16(fp, team->goalsAgainst);
+    writeBeUint16(fp, team->points);
 
-  // Team information
-  writeBeUint16(fp, team->managerID);
-  writeBeUint8(fp, team->playerCount);
-  // Player IDs
-  for (uint8_t i = 0; i < MAX_TEAM_PLAYERS; ++i) {
-    writeBeUint8(fp, team->playerIDs[i]);
+    // Team information
+    writeBeUint16(fp, team->managerID);
+    writeBeUint8(fp, team->playerCount);
+    // Player IDs
+    for (uint8_t i = 0; i < MAX_TEAM_PLAYERS; ++i) {
+      writeBeUint8(fp, team->playerIDs[i]);
+    }
   }
 }
 
 static void writeManager(FILE *fp, const FManager *manager) {
-  // Basics
-  writeBeUint16(fp, manager->id);
-  fwrite(manager->name, 1, NAME_LENGTH, fp);
-  writeBeUint8(fp, (uint8_t)manager->isActive);
+  if (!(manager->isActive)) {
+    // Basics
+    writeBeUint16(fp, manager->id);
+    fwrite(manager->name, 1, NAME_LENGTH, fp);
+    writeBeUint8(fp, (uint8_t)manager->isActive);
+  }
 }
 
 static void writePlayer(FILE *fp, const FPlayer *player) {
-  // Basics
-  writeBeUint16(fp, player->id);
-  fwrite(player->name, 1, NAME_LENGTH, fp);
-  writeBeUint8(fp, (uint8_t)player->isActive);
+  if (!(player->isActive)) {
+    // Basics
+    writeBeUint16(fp, player->id);
+    fwrite(player->name, 1, NAME_LENGTH, fp);
+    writeBeUint8(fp, (uint8_t)player->isActive);
 
-  // Field identifier
-  writeBeUint8(fp, (uint8_t)player->position);
-  writeBeUint8(fp, player->shirtNumber);
+    // Field identifier
+    writeBeUint8(fp, (uint8_t)player->position);
+    writeBeUint8(fp, player->shirtNumber);
 
-  // Personal metadata
-  writeBeUint8(fp, player->rating);
-  writeBeUint8(fp, player->fitness);
-  writeBeUint8(fp, (uint8_t)player->isInjured);
+    // Personal metadata
+    writeBeUint8(fp, player->rating);
+    writeBeUint8(fp, player->fitness);
+    writeBeUint8(fp, (uint8_t)player->isInjured);
 
-  // Season stats
-  writeBeUint16(fp, player->appearances);
-  writeBeUint16(fp, player->goals);
-  writeBeUint16(fp, player->assists);
+    // Season stats
+    writeBeUint16(fp, player->appearances);
+    writeBeUint16(fp, player->goals);
+    writeBeUint16(fp, player->assists);
+  }
 }
 
 // Read data to file
@@ -388,6 +396,7 @@ uint_fast8_t file_createDataFile(void) {
   initialAdmin = admin_create(id, value);
 
   // Add to session memory
+  session_adminEnabledCount += 1;
   session_adminCount += 1;
   session_adminDynamicArray = malloc(sizeof(FAdmin *) * session_adminCount);
   session_adminDynamicArray[0] = malloc(sizeof(FAdmin));

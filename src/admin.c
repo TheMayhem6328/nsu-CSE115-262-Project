@@ -9,6 +9,7 @@
 #include "session.h"
 #include "types.h"
 #include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 
 //// Basic CRUD
@@ -24,8 +25,10 @@ FAdmin admin_create(uint16_t id, const char *name) {
 
 FAdmin *admin_retrieve(uint16_t id) {
   for (int i = 0; i < session_adminCount; i++) {
-    if (session_adminDynamicArray[i]->id == id) {
-      return session_adminDynamicArray[i];
+    if (session_adminDynamicArray[i]->isActive) {
+      if (session_adminDynamicArray[i]->id == id) {
+        return session_adminDynamicArray[i];
+      }
     }
   }
   return NULL;
@@ -37,10 +40,15 @@ void admin_update(FAdmin *old, FAdmin *new) {
   old->isActive = new->isActive;
 }
 
-void admin_disable(uint16_t id) {
+uint_fast8_t admin_disable(uint16_t id) {
+  // Do not let user disable all admins
+  if (session_adminEnabledCount == 1) {
+    return 0;
+  }
+
   FAdmin *disableCandidate = admin_retrieve(id);
   disableCandidate->isActive = FALSE;
+  return 1;
   // TODO:
-  // Stop accessing disabled anywhere, including lookups and file write
-  // Also adjust arrays and counts
+  // Adjust arrays and counts accordingly
 }

@@ -16,6 +16,7 @@ FUser USER_CURRENT = {USER_UNDEFINED, NULL};
 
 //// Counter variables
 
+uint_fast8_t session_adminEnabledCount = 0;
 uint_fast8_t session_adminCount = 0;
 uint_fast8_t session_teamCount = 0;
 uint_fast8_t session_managerCount = 0;
